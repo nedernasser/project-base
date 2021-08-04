@@ -1,0 +1,49 @@
+version: '3.7'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    working_dir: /usr/src/app
+    container_name: app_test
+    env_file:
+      - .env.test
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "3002:3000"
+      - "9231:9229"
+    links:
+      - "db:db"
+  db:
+    image: mysql:5.7.33
+    environment:
+      MYSQL_DATABASE: 'hiring'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    command: --sql-mode="" --default-authentication-plugin=mysql_native_password
+    ports:
+      - '3308:3306'
+    expose:
+      - '3306'
+    volumes:
+      - dbdata_teste:/var/lib/mysql
+    healthcheck:
+        test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+        timeout: 5s
+        retries: 10
+    command:
+    - mysqld
+    - --default_storage_engine=InnoDB
+volumes:
+  dbdata_teste:
+networks:
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.10.1.0/24
+    name: hiring_test_network
