@@ -37,7 +37,7 @@ export class NotifymeService implements INotifymeService {
   async sendSMS(params: any): Promise<Result<any>> {
     try {
       await this.client.post('/sms', {
-        app: 'hiring-next-api',
+        app: 'project-base-api',
         service: 'aws',
         ...params
       })

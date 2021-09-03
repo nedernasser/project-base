@@ -1,5 +1,5 @@
 {
-  "name": "hiring-next-api",
+  "name": "project-base-api",
   "version": "0.0.0",
   "description": "",
   "main": ".eslintrc.js",
@@ -17,14 +17,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/oisamitech/hiring-next-api.git"
+    "url": "git+https://github.com/nedernasser/project-base.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/oisamitech/hiring-next-api/issues"
+    "url": "https://github.com/nedernasser/project-base/issues"
   },
-  "homepage": "https://github.com/oisamitech/hiring-next-api#readme",
+  "homepage": "https://github.com/nedernasser/project-base#readme",
   "dependencies": {
     "@otplib/core": "^12.0.1",
     "@sinclair/typebox": "^0.20.5",

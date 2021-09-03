@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile.test
     working_dir: /usr/src/app
-    container_name: hiring_test_app
+    container_name: project_base_test_app
     logging:
       driver: none
     tty: true
@@ -37,11 +37,11 @@ services:
       - '3002'
   db:
     image: mysql:5.7.33
-    container_name: hiring_test_app_db
+    container_name: project_base_test_app_db
     logging:
       driver: none
     environment:
-      MYSQL_DATABASE: 'hiring'
+      MYSQL_DATABASE: 'project_base'
       MYSQL_USER: 'user'
       MYSQL_PASSWORD: 'password'
       MYSQL_ROOT_PASSWORD: 'password'
@@ -75,4 +75,4 @@ networks:
     ipam:
       config:
         - subnet: 10.12.1.0/24
-    name: hiring_test_network
+    name: project_base_test_network

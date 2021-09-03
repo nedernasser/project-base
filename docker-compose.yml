@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.local
-    container_name: hiring_app
+    container_name: project_base_app
     working_dir: /usr/src/app
     env_file:
       - .env.local
@@ -32,9 +32,9 @@ services:
     command: sh -c "mockoon-cli start -d data --all; sleep infinity"
   db:
     image: mysql:5.7.33
-    container_name: hiring_app_db
+    container_name: project_base_app_db
     environment:
-      MYSQL_DATABASE: 'hiring'
+      MYSQL_DATABASE: 'project_base'
       MYSQL_USER: 'user'
       MYSQL_PASSWORD: 'password'
       MYSQL_ROOT_PASSWORD: 'password'
@@ -55,7 +55,7 @@ services:
       - --default_storage_engine=InnoDB
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: hiring_pma
+    container_name: project_base_pma
     links:
       - db
     environment:
@@ -78,5 +78,5 @@ networks:
     ipam:
       config:
         - subnet: 10.11.1.0/24
-    name: hiring_test_network
+    name: project_base_test_network
 

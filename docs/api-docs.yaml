@@ -1,9 +1,9 @@
 openapi: 3.0.0
 info:
   version: '1'
-  title: Hiring Next
+  title: Node.js Project Base
 servers:
-  - url: 'https://api-dev.samisaude.com.br/v2/hiring'
+  - url: 'https://yourapi.com/v1'
 paths:
   /users:
     get:

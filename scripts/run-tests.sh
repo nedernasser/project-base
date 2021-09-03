@@ -3,28 +3,28 @@
 docker-compose -f ./docker-compose-test.yml down
 docker-compose -f ./docker-compose-test.yml up --build &
 
-docker exec -t hiring_test_app_db sh -c 'mysqladmin ping -h localhost'
+docker exec -t project_base_test_app_db sh -c 'mysqladmin ping -h localhost'
 
 while true; do
-  if grep -q 'No such' <<<"$(docker exec -t hiring_test_app_db sh -c 'mysqladmin -u root -ppassword ping -h localhost')"; then
+  if grep -q 'No such' <<<"$(docker exec -t project_base_test_app_db sh -c 'mysqladmin -u root -ppassword ping -h localhost')"; then
     continue
   fi
 
-  if grep -q 'mysqld is alive' <<<"$(docker exec -t hiring_test_app_db sh -c 'mysqladmin -u root -ppassword ping -h localhost')"; then
+  if grep -q 'mysqld is alive' <<<"$(docker exec -t project_base_test_app_db sh -c 'mysqladmin -u root -ppassword ping -h localhost')"; then
     break
   fi
 
   sleep 2;
 done
 
-docker exec -t hiring_test_app_db sh -c 'mysqladmin -u root -p$MYSQL_PASSWORD --force drop hiring'
-docker exec -t hiring_test_app_db sh -c 'mysqladmin -u root -p$MYSQL_PASSWORD --force create hiring'
+docker exec -t project_base_test_app_db sh -c 'mysqladmin -u root -p$MYSQL_PASSWORD --force drop project_base'
+docker exec -t project_base_test_app_db sh -c 'mysqladmin -u root -p$MYSQL_PASSWORD --force create project_base'
 
 while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:3006/health-check --header 'x-api-key: 5c7a38ee-985b-4d84-b3a4-025dddafa071')" != "200" ]]; do sleep 2; done
 
-docker exec -t hiring_test_app sh -c 'npm run migration'
+docker exec -t project_base_test_app sh -c 'npm run migration'
 sleep 1;
-docker exec -it hiring_test_app sh -c 'npm run mocha; echo $?'
+docker exec -it project_base_test_app sh -c 'npm run mocha; echo $?'
 
 if [ $? -eq 0 ]
 then
