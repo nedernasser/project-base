@@ -4,6 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.local
+    container_name: hiring_app
     working_dir: /usr/src/app
     env_file:
       - .env.local
@@ -12,11 +13,26 @@ services:
         condition: service_healthy
     ports:
       - "3005:3000"
-      - "9235:9229"
+      - "9237:9229"
+    volumes:
+      - ./:/usr/src/app
     links:
       - "db:db"
+    expose:
+      - '9237'
+  api-mock:
+    build:
+      context: .
+      dockerfile: api-mocks/Dockerfile
+    ports:
+      - "3502:3001"
+      - "3503:3002"
+    volumes:
+      - ./api-mocks/api-mock.json:/data:ro
+    command: sh -c "mockoon-cli start -d data --all; sleep infinity"
   db:
     image: mysql:5.7.33
+    container_name: hiring_app_db
     environment:
       MYSQL_DATABASE: 'hiring'
       MYSQL_USER: 'user'
@@ -39,7 +55,7 @@ services:
       - --default_storage_engine=InnoDB
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: pma
+    container_name: hiring_pma
     links:
       - db
     environment:
@@ -49,6 +65,18 @@ services:
     restart: always
     ports:
       - 8084:80
+  redis:
+    image: redis:latest
+    command: redis-server --requirepass password
+    ports:
+      - "6379:6379"
 volumes:
   dbdata:
+networks:
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.11.1.0/24
+    name: hiring_test_network
 

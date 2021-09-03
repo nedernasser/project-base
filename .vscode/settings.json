@@ -18,5 +18,11 @@
       "**/test.ts": true,
   },
   "javascript.validate.enable": true,
-  "javascript.suggestionActions.enabled": true
+  "javascript.suggestionActions.enabled": true,
+  "mochaExplorer.envPath": ".env.test",
+  "mochaExplorer.require": [
+    "ts-node/register",
+    "tsconfig-paths/register"
+  ],
+  "mochaExplorer.files": "test/**/*.ts",
 }

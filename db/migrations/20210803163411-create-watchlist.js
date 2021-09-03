@@ -1,7 +1,7 @@
 'use strict'
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('WatchList', {
+    await queryInterface.createTable('Watchlists', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -18,7 +18,8 @@ module.exports = {
         unique: true
       },
       reason: {
-        type: Sequelize.STRING(100),
+        type: Sequelize.ENUM('FINANCIAL_PENDING','BLOCKED','SCAM'),
+        defaultValue: 'BLOCKED',
         allowNull: false
       },
       description: {
@@ -43,6 +44,6 @@ module.exports = {
     })
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('WatchList')
+    await queryInterface.dropTable('Watchlists')
   }
 }

@@ -1,0 +1,165 @@
+{
+    "source": "mockoon:1.14.1",
+    "data": [
+        {
+            "type": "environment",
+            "item": {
+                "uuid": "",
+                "lastMigration": 15,
+                "name": "CNPJ",
+                "endpointPrefix": "",
+                "latency": 0,
+                "port": 3001,
+                "routes": [
+                    {
+                        "uuid": "",
+                        "documentation": "Get a invalid Company",
+                        "method": "get",
+                        "endpoint": "reports/:document",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "",
+                                "latency": 0,
+                                "statusCode": 404,
+                                "label": "",
+                                "headers": [],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false
+                            },
+                            {
+                                "uuid": "",
+                                "body": "",
+                                "latency": 0,
+                                "statusCode": 404,
+                                "label": "",
+                                "headers": [],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [
+                                    {
+                                        "target": "params",
+                                        "modifier": "document",
+                                        "value": "12345678901234",
+                                        "isRegex": false
+                                    }
+                                ],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false
+                            },
+                            {
+                                "uuid": "",
+                                "body": "{\n  \"data\": {\n    \"last_update\": \"2021-07-27T21:58:10.000Z\",\n    \"name\": \"Sami assistencia medica ltda\",\n    \"cnpj\": \"{{urlParam 'document'}}\",\n    \"type\": \"MATRIZ\",\n    \"size\": \"DEMAIS\",\n    \"founded\": \"2020-03-05\",\n    \"capital\": 46682454,\n    \"email\": \"vitor.asseituno@oisami.com\",\n    \"phone\": \"+551137289228\",\n    \"phone_alternative\": \"+551193645067\",\n    \"address\": {\n      \"street\": \"Al vicente pinzon\",\n      \"number\": \"54\",\n      \"complement\": \"Andar 11\",\n      \"neighborhood\": \"Vila olimpia\",\n      \"city\": \"Sao paulo\",\n      \"state\": \"SP\",\n      \"zipcode\": \"04547130\",\n      \"city_ibge\": \"3550308\",\n      \"state_ibge\": \"35\"\n    },\n    \"registration\": {\n      \"status\": \"ATIVA\",\n      \"status_date\": \"2020-03-05\",\n      \"status_reason\": null,\n      \"special_status\": null,\n      \"special_status_date\": null\n    },\n    \"legal_nature\": {\n      \"code\": \"2062\",\n      \"description\": \"Sociedade Empresária Limitada\"\n    },\n    \"primary_activity\": {\n      \"code\": \"6550200\",\n      \"description\": \"Planos de saúde\"\n    },\n    \"secondary_activities\": [],\n    \"membership\": [{\n      \"name\": \"VITOR ASSEITUNO MORAIS\",\n      \"tax_id\": \"***287258**\",\n      \"role\": {\n        \"code\": \"05\",\n        \"description\": \"Administrador\"\n      }\n    }, {\n      \"name\": \"LUIZ GUILHERME VALLILO BERARDO\",\n      \"tax_id\": \"***529518**\",\n      \"role\": {\n        \"code\": \"05\",\n        \"description\": \"Administrador\"\n      }\n    }, {\n      \"name\": \"SAMI HEALTH DATA LLC\",\n      \"tax_id\": \"32882096000155\",\n      \"home_country\": \"ESTADOS UNIDOS\",\n      \"role\": {\n        \"code\": \"37\",\n        \"description\": \"Sócio Pessoa Jurídica Domiciliado no Exterior\"\n      },\n      \"legal_rep\": {\n        \"name\": \"VITOR ASSEITUNO MORAIS\",\n        \"tax_id\": null,\n        \"role\": {\n          \"code\": \"17\",\n          \"description\": \"Procurador\"\n        }\n      }\n    }],\n    \"partnership\": {},\n    \"files\": {\n      \"registration\": \"https://api.cnpja.com.br/files/eyJ1IjoiZTA0ZjE0OTMtNDhkOC00ZjI4LWFlMmMtMTAwODkxMzM1OThjIiwieCI6IjM2NTY3NzIxMDAwMTI1IiwidCI6IkNSIn0\",\n      \"membership\": \"https://api.cnpja.com.br/files/eyJ1IjoiZTA0ZjE0OTMtNDhkOC00ZjI4LWFlMmMtMTAwODkxMzM1OThjIiwieCI6IjM2NTY3NzIxMDAwMTI1IiwidCI6IkNNIn0\"\n    }\n  }\n}",
+                                "latency": 0,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [
+                                    {
+                                        "target": "params",
+                                        "modifier": "document",
+                                        "value": "[0-9]{2}\\.?[0-9]{3}\\.?[0-9]{3}\\/?[0-9]{4}\\-?[0-9]{2}",
+                                        "isRegex": true
+                                    }
+                                ],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false,
+                        "sequentialResponse": false
+                    }
+                ],
+                "proxyMode": false,
+                "proxyHost": "",
+                "proxyRemovePrefix": false,
+                "https": false,
+                "cors": true,
+                "headers": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "proxyReqHeaders": [
+                    {
+                        "key": "",
+                        "value": ""
+                    }
+                ],
+                "proxyResHeaders": [
+                    {
+                        "key": "",
+                        "value": ""
+                    }
+                ]
+            }
+        },
+        {
+            "type": "environment",
+            "item": {
+                "uuid": "",
+                "lastMigration": 15,
+                "name": "NOTIFYME",
+                "endpointPrefix": "",
+                "latency": 0,
+                "port": 3002,
+                "routes": [
+                    {
+                        "uuid": "",
+                        "documentation": "Send Message",
+                        "method": "post",
+                        "endpoint": "/sms",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "{\n  \"data\": {\n    \"token\": \"123456\"\n    }\n  }\n}",
+                                "latency": 0,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false,
+                        "sequentialResponse": false
+                    }
+                ],
+                "proxyMode": false,
+                "proxyHost": "",
+                "proxyRemovePrefix": false,
+                "https": false,
+                "cors": true,
+                "headers": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "proxyReqHeaders": [
+                    {
+                        "key": "",
+                        "value": ""
+                    }
+                ],
+                "proxyResHeaders": [
+                    {
+                        "key": "",
+                        "value": ""
+                    }
+                ]
+            }
+        }
+    ]
+}

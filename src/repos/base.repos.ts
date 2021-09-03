@@ -6,7 +6,7 @@ export interface IBaseRepository<T extends Model> {
   count(predicate): Promise<number>
   createUnique(data): Promise<T>
   create(data): Promise<T>
-  update(data: T, predicate: {[key: string]: any}): Promise<any>
+  update<M>(data: Omit<M, 'id'>, predicate: {[key: string]: any}): Promise<any>
 }
 
 export class BaseRepository<T extends Model> implements IBaseRepository<T> {
@@ -40,7 +40,7 @@ export class BaseRepository<T extends Model> implements IBaseRepository<T> {
     return this.Model.create(data)
   }
 
-  public update(data: T, predicate: {[key: string]: any}): Promise<any> {
+  public update<M>(data: Omit<M, 'id'>, predicate: {[key: string]: any}): Promise<any> {
     return this.Model.update(data, predicate)
   }
 

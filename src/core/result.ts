@@ -4,15 +4,15 @@ export class Result<T> {
   public isSuccess: boolean
   public isFailure: boolean
   public error?: ErrorCode
-  private _value?: T
+  private readonly _value?: T
 
   private constructor(isSuccess: boolean, error?: ErrorCode, value?: T) {
     if (isSuccess && error) {
-      throw new Error(`InvalidOperation: A result cannot be 
+      throw new Error(`InvalidOperation: A result cannot be
         successful and contain an error`)
     }
     if (!isSuccess && !error) {
-      throw new Error(`InvalidOperation: A failing result 
+      throw new Error(`InvalidOperation: A failing result
         needs to contain an error message`)
     }
 
@@ -32,14 +32,13 @@ export class Result<T> {
     return this._value
   }
 
-  public throw<U>(): Result<U> {
-    const erroMap = ErrorMap[this.error ?? ErrorCode.GENERIC_ERROR]
-    throw new ApiError(erroMap.status, this.error as number, erroMap.message)
+  public throw(): void {
+    throw this.getError()
   }
 
   public send(code: number, res: any): any {
     if (this.isFailure) {
-      this.throw()
+      res.send(this.getError())
     } else {
       res.code(code).send(this._value)
     }
@@ -59,5 +58,10 @@ export class Result<T> {
     }
 
     return Result.ok<any>()
+  }
+
+  private getError(): ApiError {
+    const errorMap = ErrorMap[this.error || ErrorCode.GENERIC_ERROR]
+    return new ApiError(errorMap.status, this.error as number, errorMap.message)
   }
 }

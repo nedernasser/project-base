@@ -1,18 +1,32 @@
-import {Validator} from 'jsonschema'
+import {Type} from '@sinclair/typebox'
+import {DocumentTypeEnum} from '@models/watchlist.model'
 
-export const validator = new Validator()
+export const WatchlistCreateBodySchema = Type.Object({
+  documentType: Type.Enum(DocumentTypeEnum),
+  document: Type.String({
+    minLength: 11,
+    maxLength: 14
+  }),
+  description: Type.String({
+    minLength: 3,
+    maxLength: 150
+  }),
+  isActive: Type.Optional(Type.Boolean())
+})
 
-export const watchlistSchema = {
-  id: '/WatchlistSchema',
-  type: 'object',
-  properties: {
-    documentType: {type: 'string', minLength: 3, maxLength: 4},
-    document: {type: 'string', minLength: 11, maxLength: 14},
-    reason: {type: 'string', minLength: 3, maxLength: 100},
-    description: {type: 'string', minLength: 3, maxLength: 150},
-    isActive: {type: 'boolean'}
-  },
-  required: ['documentType', 'document', 'reason']
-}
-
-validator.addSchema(watchlistSchema, watchlistSchema.id)
+export const WatchlistUpdateBodySchema = Type.Object({
+  documentType: Type.Optional(Type.Enum(DocumentTypeEnum)),
+  document: Type.Optional(
+    Type.String({
+      minLength: 11,
+      maxLength: 14
+    })
+  ),
+  description: Type.Optional(
+    Type.String({
+      minLength: 3,
+      maxLength: 150
+    })
+  ),
+  isActive: Type.Optional(Type.Boolean())
+})

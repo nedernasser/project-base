@@ -1,14 +1,11 @@
 import 'reflect-metadata'
 
-import 'src/lib'
 import 'src/repos'
-import 'src/services'
 
-import libApp from '@lib/app'
+import {App, IAppFactory} from '@lib/app'
 import {exec} from 'child_process'
 import {DataBase} from '@lib/db'
-
-const app = libApp()
+import {container} from 'tsyringe'
 
 function runMigrations(): Promise<void> {
   return new Promise(resolve => {
@@ -32,14 +29,16 @@ function runSeeds(): Promise<void> {
   })
 }
 
-app.then(server => {
-  server.listen(parseInt(process.env.APP_PORT ?? '3000'), '0.0.0.0', async (error: Error, address: string) => {
-    if (error) throw error
-    server.log.info(`Server listening on ${address}`)
+async function startServer() {
+  await runMigrations()
+  // await runSeeds()
+  new DataBase().connect(async () => {
+    const appInstance = container.resolve<IAppFactory>(App)
+    const port = process.env.APP_PORT ?? '3000'
 
-    await runMigrations()
-    await runSeeds()
-
-    new DataBase().connect()
+    const serverInstance = await appInstance.build()
+    await serverInstance.listen(port)
   })
-})
+}
+
+startServer()

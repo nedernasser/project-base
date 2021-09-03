@@ -1,0 +1,538 @@
+openapi: 3.0.0
+info:
+  version: '1'
+  title: Hiring Next
+servers:
+  - url: 'https://api-dev.samisaude.com.br/v2/hiring'
+paths:
+  /users:
+    get:
+      summary: 'Returns the user or 404'
+      operationId: search-user
+      tags:
+        - User
+      parameters:
+        - in: query
+          name: 'phone'
+          schema:
+            type: string
+          description: phone number with the format 5511999999999
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/UserDTO'
+        '404':
+          description: 'Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /auth/sms/send-token:
+    post:
+      summary: 'Send totp token to validate a phone number'
+      operationId: totp-token
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - phone
+              properties:
+                phone:
+                  type: string
+                  example: 5511999999999
+      responses:
+        '204':
+          description: 'No content'
+  /auth/signin:
+    post:
+      summary: 'Returns the access token'
+      operationId: sign-in
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignInUseCaseDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: number
+        '401':
+          description: 'Unauthorized - Occurs when credentials are invalid'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /auth/refreshtoken:
+    post:
+      summary: 'Refresh token'
+      operationId: refresh-token
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenUseCaseDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JWTToken'
+        '401':
+          description: 'Unauthorized - Occurs when refresh token is invalid'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /watchlists/list:
+    get:
+      summary: 'Get Watchlist list'
+      operationId: list-watchlists
+      tags:
+        - Watchlist
+      parameters:
+        - in: query
+          name: 'all'
+          schema:
+            type: boolean
+          description: false to Active Watchlist and true to all
+      responses:
+        '200':
+          description: 'List all actives watchlist documents'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WatchlistDTO'
+        '401':
+          description: 'Unauthorized - Occurs when refresh token is invalid'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /watchlists:
+    post:
+      summary: 'Create a Watchlist'
+      operationId: create-watchlist
+      tags:
+        - Watchlist
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WatchlistDTO'
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: number
+        '401':
+          description: 'Unauthorized - Occurs when refresh token is invalid'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /watchlists/{document}:
+    parameters:
+      - in: path
+        name: 'document'
+        required: true
+        schema:
+          type: string
+        description: 'CNPJ or CPF'
+    put:
+      summary: 'Update a Watchlist'
+      operationId: update-watchlist
+      tags:
+        - Watchlist
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WatchlistDTO'
+      responses:
+        '204':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: number
+        '401':
+          description: 'Unauthorized - Occurs when refresh token is invalid'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: 'Delete a Watchlist'
+      operationId: delete-watchlist
+      tags:
+        - Watchlist
+      responses:
+        '204':
+          description: OK
+        '401':
+          description: 'Unauthorized - Occurs when refresh token is invalid'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      summary: 'Retrieve a Watchlist'
+      operationId: get-watchlist
+      tags:
+        - Watchlist
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WatchlistDTO'
+        '401':
+          description: 'Unauthorized - Occurs when refresh token is invalid'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /companies/{document}:
+    get:
+      summary: 'Get company by CNPJ'
+      operationId: search-company
+      parameters:
+        - in: path
+          name: 'document'
+          required: true
+          schema:
+            type: string
+          description: Document
+      tags:
+        - Company
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CNPJResponse'
+        '401':
+          description: 'Unauthorized - Occurs when refresh token is invalid'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /companies:
+    post:
+      summary: 'Create a User/Company/Business'
+      operationId: create-company
+      tags:
+        - Company
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyDTO'
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: number
+        '401':
+          description: 'Unauthorized - Occurs when refresh token is invalid'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-Key
+  schemas:
+    UserDTO:
+      type: object
+      required:
+        - name
+        - phone
+        - totpKey
+        - isActive
+      properties:
+        name:
+          type: string
+          example: 'Victor Asseituno'
+        phone:
+          type: string
+          example: '5511999999999'
+        totpKey:
+          type: string
+          example: '111000'
+        email:
+          type: string
+          example: 'victor@samisaude.com'
+    CompanyDTO:
+      type: object
+      required:
+        - user
+        - company
+      properties:
+        user:
+          type: object
+          required:
+            - name
+            - phone
+            - totpKey
+            - isActive
+          properties:
+            name:
+              type: string
+              example: 'Victor Asseituno'
+            phone:
+              type: string
+              example: '5511999999999'
+            totpKey:
+              type: string
+              example: '111000'
+            email:
+              type: string
+              example: 'victor@samisaude.com'
+        company:
+          type: object
+          required:
+            - document
+          properties:
+            document:
+              type: string
+              example: '11111111000111'
+    SignInUseCaseDTO:
+      type: object
+      required:
+        - user
+        - password
+        - mode
+      properties:
+        user:
+          type: string
+          example: '5511999999999'
+        password:
+          type: string
+          example: '111000'
+        mode:
+          type: string
+          enum: ['MOBILE', 'SELLER']
+          example: 'MOBILE'
+    RefreshTokenUseCaseDTO:
+      type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+    JWTToken:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          description: 'JWT Token'
+        refreshToken:
+          type: string
+          description: 'Random Token, used only once'
+        expiresIn:
+          type: number
+          description: 'Milliseconds'
+    WatchlistDTO:
+      type: object
+      properties:
+        id:
+          type: number
+          description: 'Watchlist Id'
+        documentType:
+          type: string
+          enum: ['CNPJ', 'CPF']
+          description: 'Document Type'
+          example: 'CPF'
+        document:
+          type: string
+          description: 'Watchlist document'
+          example: '00000000000'
+        reason:
+          type: string
+          enum: ['Suspension for Default','Cancellation for Default','Scam']
+          description: 'Watchlist reason'
+          example: 'Any reason'
+        description:
+          type: string
+          description: 'Watchlist description'
+          example: 'Any description'
+        isActive:
+          type: boolean
+          description: 'Watchlist status'
+          default: true
+    CNPJResponse:
+      type: object
+      properties:
+        name:
+          type: string
+          description: 'Company Name'
+        cnpj:
+          type: string
+          description: 'Company Document'
+        type:
+          type: string
+          description: 'Company Type'
+        size:
+          type: string
+          description: 'Company Size'
+        founded:
+          type: string
+          description: 'Company Founded Date'
+        capital:
+          type: string
+          description: 'Company Capital Value'
+        email:
+          type: string
+          description: 'Company Email'
+        phone:
+          type: string
+          description: 'Company Phone'
+        street:
+          type: string
+          description: 'Company Address Street'
+        number:
+          type: string
+          description: 'Company Address Number'
+        complement:
+          type: string
+          description: 'Company Address Complement'
+        neighborhood:
+          type: string
+          description: 'Company Address Neighborhood'
+        city:
+          type: string
+          description: 'Company Address City'
+        state:
+          type: string
+          description: 'Company Address State'
+        zipcode:
+          type: string
+          description: 'Company Address Zip Code'
+        status:
+          type: string
+          description: 'Company Status'
+        legalNature:
+          type: object
+          properties:
+            code:
+              type: number
+            description:
+              type: string
+          description: 'Company Legal Nature'
+        primaryActivity:
+          type: object
+          properties:
+            code:
+              type: number
+            description:
+              type: string
+          description: 'Company Primary Activity'
+        secondaryActivities:
+          type: array
+          items: {
+            $ref: '#/components/schemas/KeyValuePair'
+          }
+          description: 'Company Secondary Activities'
+    KeyValuePair:
+      type: object
+      properties:
+        code:
+          type: number
+        description:
+          type: string
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string

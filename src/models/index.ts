@@ -1,1 +1,3 @@
-export default {}
+import Watchlist from './watchlist.model'
+
+export default {Watchlist}

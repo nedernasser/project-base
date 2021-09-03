@@ -1,14 +1,16 @@
-import {Result} from '../../core/result'
-import {singleton, inject} from 'tsyringe'
-import WatchList from '@models/watchlist.model'
-import {validator, watchlistSchema} from './watchlist.schema'
-import {IWatchlistRepository} from '../../repos/watchlist.repos'
+import {Result} from 'src/core/result'
+import {inject, singleton} from 'tsyringe'
+import {IWatchlistRepository, WatchlistRepository} from 'src/repos/watchlist.repos'
+import {ErrorCode} from 'src/const/error'
+import {ILoggerFactory, ILoggerService, LoggerFactory} from '@lib/logger'
+import {DocumentTypeEnum, WatchlistReasonTypeEnum} from 'src/models/watchlist.model'
+import {SessionService} from '../session/session.service'
 
 export interface WatchlistDTO {
   id?: bigint
-  documentType: string
+  documentType: DocumentTypeEnum
   document: string
-  reason: string
+  reason: WatchlistReasonTypeEnum
   description?: string
   isActive: boolean
 }
@@ -16,49 +18,80 @@ export interface WatchlistDTO {
 export interface IWatchlistService {
   create(request: WatchlistDTO): Promise<Result<bigint>>
   update(request: WatchlistDTO): Promise<Result<bigint>>
-  delete(id: bigint): Promise<Result<void>>
-  list(): Promise<Result<WatchList[]>>
+  delete(document: string): Promise<Result<void>>
+  list(all: string): Promise<Result<WatchlistDTO[]>>
 }
 
-@singleton()
+@singleton<IWatchlistService>()
 export class WatchlistService implements IWatchlistService {
-  constructor(@inject('WatchlistRepository') private watchlistRepository: IWatchlistRepository) {}
+  private readonly logger: ILoggerService
+
+  constructor(
+    @inject(LoggerFactory) loggerFactory: ILoggerFactory,
+    @inject(WatchlistRepository) private watchlistRepository: IWatchlistRepository
+  ) {
+    this.logger = loggerFactory.build('WatchlistService')
+  }
 
   async create(request: WatchlistDTO): Promise<Result<bigint>> {
-    validator.validate(request, watchlistSchema, {throwAll: true})
-    let watchlist = await this.watchlistRepository.findOne({document: request.document})
-    
-    if (!watchlist) {
-      watchlist = await this.watchlistRepository.create(request)
+    const session = SessionService.getSession()
+
+    let watchlist = await this.watchlistRepository.findOne({
+      where: {
+        document: request.document
+      }
+    })
+
+    if (watchlist) {
+      return Result.fail(ErrorCode.DUPLICATED_WATCHLIST_ERROR)
     }
 
+    watchlist = await this.watchlistRepository.create(request)
     return Result.ok(watchlist.id)
   }
 
   async update(request: WatchlistDTO): Promise<Result<bigint>> {
-    validator.validate(request, watchlistSchema, {throwAll: true})
-    const watchlist = await updateWatchList(request.isActive, request.id)
-    return Result.ok(watchlist.id)
+    const result = await this.watchlistRepository.update(request, {
+      where: {document: request.document}
+    })
+
+    return result.length === 0 ? Result.fail(ErrorCode.NOT_FOUND_WATCHLIST_ERROR) : Result.ok(request.id)
   }
 
-  async delete(id: bigint): Promise<Result<void>> {
-    await updateWatchList(false, id)
+  async delete(document: string): Promise<Result<void>> {
+    const watchlist = await this.getWatchlist(document)
+
+    if (!watchlist) {
+      return Result.fail(ErrorCode.NOT_FOUND_WATCHLIST_ERROR)
+    }
+
+    await this.watchlistRepository.update(
+      {
+        isActive: false
+      } as any,
+      {
+        where: {document}
+      }
+    )
     return Result.ok()
   }
 
-  async list(): Promise<Result<WatchList[]>> {
-    return Result.ok(await this.watchlistRepository.findAll({isActive: true}))
-  }
-}
+  async list(all: string): Promise<Result<WatchlistDTO[]>> {
+    let params = {}
 
-async function updateWatchList(isActive: boolean, id?: bigint) {
-  const watchlist = await this.watchlistRepository.update(
-    {
-      isActive
-    } as any,
-    {
-      where: {id}
+    const isTrueSet = all?.toUpperCase() === 'FALSE'
+
+    if (isTrueSet) {
+      params = {where: {isActive: true}}
     }
-  )
-  return watchlist
+
+    const result = await this.watchlistRepository.findAll(params)
+    return Result.ok(result)
+  }
+
+  async getWatchlist(document: string): Promise<WatchlistDTO> {
+    return await this.watchlistRepository.findOne({
+      where: {document}
+    })
+  }
 }

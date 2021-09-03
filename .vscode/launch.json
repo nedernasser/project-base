@@ -10,15 +10,27 @@
       "name": "Attach to Process",
       "protocol": "inspector",
       "stopOnEntry": false,
-      "port": 9230,
+      "port": 9237,
       "remoteRoot": "/usr/src/app",
+      "localRoot": "${workspaceFolder}"
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Debug to Test Process",
+      "protocol": "inspector",
+      "stopOnEntry": false,
+      "port": 9237,
+      "remoteRoot": "/usr/src/app",
+      "resolveSourceMapLocations": ["${workspaceFolder}/dist"],
       "localRoot": "${workspaceFolder}"
     },
     {
       "name": "Debug Mocha Tests",
       "type": "pwa-node",
       "request": "attach",
-      "port": 9229,
+      "port": 9235,
+      "timeout": 20000,
       "continueOnAttach": true,
       "autoAttachChildProcesses": false,
       "resolveSourceMapLocations": [

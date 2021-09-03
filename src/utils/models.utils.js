@@ -3,6 +3,7 @@ import {Transaction} from 'sequelize'
 import {getNamespace} from 'cls-hooked'
 import logger from '@lib/logger'
 import db from '@lib/db'
+import ApiError from 'src/const/error'
 
 export async function scoped(func) {
   const namespace = getNamespace('transaction-namespace')
@@ -19,9 +20,7 @@ export async function scoped(func) {
       try {
         return await func({transaction})
       } catch (error) {
-        logger.error(`::models::scoped - ${JSON.stringify(error)}`)
-        logger.error(`::models::scoped - ${error.stack}`)
-        throw error
+        throw new ApiError(400, 400, JSON.stringify(error))
       }
     }
   )
